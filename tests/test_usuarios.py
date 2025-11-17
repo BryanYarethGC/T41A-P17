@@ -30,14 +30,14 @@ def test_edad_juan():
 
 def test_categoria_jsonb():
     result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO from productos where atributos->>'CATEGORIA' = 'PAPELERIA';")
-    productos=result[0]
+    productos={row[0] for row in result}
     assert "LIBRETA" in productos
     assert "LAPIZ" in productos
     assert "LIBRO" in productos
 
 def test_color_basico():
     result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO from productos where atributosH->'COLOR' = 'ROJO';")
-    productos=result[0]
+    productos={row[0] for row in result}
     assert "LIBRETA" in productos
     assert "RELOJ" in productos
 
@@ -47,21 +47,21 @@ def test_update_basico():
 
 def test_marca_inter():
     result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO, atributosH from productos WHERE atributosH?'MARCA';")
-    productos=result[0]
+    productos={row[0] for row in result}
     assert "LIBRETA" in productos
     assert "RELOJ" in productos
     assert "CELULAR" in productos
 
 def test_marcayprecio_inter():
     result=run_query("SELECT atributos->>'NOMBRE'as PRODUCTO, atributosH from productos WHERE atributosH->'MARCA' = 'SAMSUNG' and precio>500;")
-    productos=result[0]
+    productos={row[0] for row in result}
     assert "RELOJ" in productos
     assert "CELULAR" in productos
 
 def test_keysyvals_inter():
     result=run_query("SELECT skeys(atributosH) AS clave, svals(atributosH) AS valor FROM productos;")
-    keys=result[0]
-    vals=result[1]
+    keys={row[0] for row in result}
+    vals={row[1] for row in result}
     assert "MARCA" in keys
     assert "PESO" in keys
     assert "COLOR" in keys
@@ -79,7 +79,7 @@ def test_groupby_avanz():
 
 def test_multclaves_avanz():
     result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO, atributosH from productos WHERE atributosH?&ARRAY['COLOR','PESO'];")
-    productos=result[0]
+    productos={row[0] for row in result}
     assert "RELOJ" in productos
     assert "CELULAR" in productos
     assert "LIBRETA" in productos
