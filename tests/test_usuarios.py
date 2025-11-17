@@ -43,7 +43,7 @@ def test_color_basico():
 
 def test_update_basico():
     result=run_query("SELECT atributosH->'PESO' as PESO from productos where id=4;")
-    assert result[0][0]='165KG'
+    assert result[0][0]=='165KG'
 
 def test_marca_inter():
     result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO, atributosH from productos WHERE atributosH?'MARCA';")
@@ -70,12 +70,12 @@ def test_keysyvals_inter():
 
 def test_contarcolor_inter():
     result=run_query("SELECT count(*) from productos WHERE atributosH?'COLOR';")
-    assert result[0][0]=4
+    assert result[0][0]==4
 
 def test_groupby_avanz():
     result=run_query("SELECT atributosH->'MARCA' as MARCA,count(*) from productos GROUP BY atributosH->'MARCA';")
-    assert result[0][1]="SAMSUNG"
-    assert result[1][1]=2
+    assert result[0][1]=="SAMSUNG"
+    assert result[1][1]==2
 
 def test_multclaves_avanz():
     result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO, atributosH from productos WHERE atributosH?&ARRAY['COLOR','PESO'];")
@@ -87,4 +87,4 @@ def test_multclaves_avanz():
 
 def test_resumen_avanz():
     result=run_query("SELECT resumen(atributosH,atributos) from productos where id=1;")
-    assert result[0][0]="LIBRETA, PESO: 60G, COLOR: ROJO, MARCA: SCRIBE"
+    assert result[0][0]=="LIBRETA, PESO: 60G, COLOR: ROJO, MARCA: SCRIBE"
