@@ -27,3 +27,64 @@ def test_usuario_activo():
 def test_edad_juan():
     result = run_query("SELECT data->>'edad' FROM usuarios WHERE id = 2;")
     assert result[0][0] == "25"
+
+def test_categoria_jsonb():
+    result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO from productos where atributos->>'CATEGORIA' = 'PAPELERIA';")
+    productos=result[0]
+    assert "LIBRETA" in productos
+    assert "LAPIZ" in productos
+    assert "LIBRO" in productos
+
+def test_color_basico():
+    result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO from productos where atributosH->'COLOR' = 'ROJO';")
+    productos=result[0]
+    assert "LIBRETA" in productos
+    assert "RELOJ" in productos
+
+def test_update_basico():
+    result=run_query("SELECT atributosH->'PESO' as PESO from productos where id=4;")
+    assert result[0][0]='165KG'
+
+def test_marca_inter():
+    result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO, atributosH from productos WHERE atributosH?'MARCA';")
+    productos=result[0]
+    assert "LIBRETA" in productos
+    assert "RELOJ" in productos
+    assert "CELULAR" in productos
+
+def test_marcayprecio_inter():
+    result=run_query("SELECT atributos->>'NOMBRE'as PRODUCTO, atributosH from productos WHERE atributosH->'MARCA' = 'SAMSUNG' and precio>500;")
+    productos=result[0]
+    assert "RELOJ" in productos
+    assert "CELULAR" in productos
+
+def test_keysyvals_inter():
+    result=run_query("SELECT skeys(atributosH) AS clave, svals(atributosH) AS valor FROM productos;")
+    keys=result[0]
+    vals=result[1]
+    assert "MARCA" in keys
+    assert "PESO" in keys
+    assert "COLOR" in keys
+    assert "ROJO" in vals
+    assert "SAMSUNG" in vals
+
+def test_contarcolor_inter():
+    result=run_query("SELECT count(*) from productos WHERE atributosH?'COLOR';")
+    assert result[0][0]=4
+
+def test_groupby_avanz():
+    result=run_query("SELECT atributosH->'MARCA' as MARCA,count(*) from productos GROUP BY atributosH->'MARCA';")
+    assert result[0][1]="SAMSUNG"
+    assert result[1][1]=2
+
+def test_multclaves_avanz():
+    result=run_query("SELECT atributos->>'NOMBRE' as PRODUCTO, atributosH from productos WHERE atributosH?&ARRAY['COLOR','PESO'];")
+    productos=result[0]
+    assert "RELOJ" in productos
+    assert "CELULAR" in productos
+    assert "LIBRETA" in productos
+    assert "LIBRO" in productos
+
+def test_resumen_avanz():
+    result=run_query("SELECT resumen(atributosH,atributos) from productos where id=1;")
+    assert result[0][0]="LIBRETA, PESO: 60G, COLOR: ROJO, MARCA: SCRIBE"
