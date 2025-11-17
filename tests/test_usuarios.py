@@ -74,7 +74,7 @@ def test_contarcolor_inter():
 
 def test_groupby_avanz():
     result=run_query("SELECT atributosH->'MARCA' as MARCA,count(*) from productos GROUP BY atributosH->'MARCA';")
-    assert result[0][1]=="SAMSUNG"
+    assert result[1][0]=="SAMSUNG"
     assert result[1][1]==2
 
 def test_multclaves_avanz():
